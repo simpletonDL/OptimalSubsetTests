@@ -4,6 +4,7 @@ import (
 	. "project/OptimalSubsetTests/tries"
 	"math"
 )
+
 func FindMinOptimalSubset(tree Tree, bound int) (float64, []*Node) {
 	tree.UpdateSizes()
 	treeSize := tree.Root.Size

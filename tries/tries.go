@@ -8,6 +8,10 @@ type Tree struct {
 	Root *Node
 }
 
+func (tree Tree) GetSize() int {
+	return tree.Root.Size
+}
+
 func (tree Tree) UpdateSizes() int {
 	return tree.Root.UpdateSizes()
 }
@@ -44,9 +48,9 @@ func (node *Node) UpdateSizes() (int) {
 }
 
 func (node Node) Print() {
-	fmt.Print("[", node.Weight, " ")
+	fmt.Print("[", node.ID, " ")
 	for _, ptr := range node.Children {
 		ptr.Print()
 	}
-	fmt.Print(" ", node.Profit, "]")
+	fmt.Print(" ", "]")
 }

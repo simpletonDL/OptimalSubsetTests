@@ -1,54 +1,63 @@
 package main
 
 import (
-	//"project/tests"
-	//"fmt"
-	/*"fmt"
-	"math"*/
-	//. "project/tries"
-	//"fmt"
-	//"fmt"
-	//"math"
-	//"project/tests"
-	//"project/knapsack"
+	. "project/OptimalSubsetTests/knapsack"
+	. "project/OptimalSubsetTests/tries"
+	"fmt"
 )
 
+
 func main() {
-	/*xs_1 := []int{1,2,3}
-	xs_2 := xs_1
-	fmt.Println(xs_1, xs_2)
-	xs_1 = append(xs_1, 4)
-	fmt.Print(xs_1, xs_2)
-	/*countVertex := 4
-	maxWeight := 10
-	maxProfit := 10.0
-	bound := 10
+	/*tree := Tree{Root:NewNode(0,0,0)}
+	tree.Root.AddChild(NewNode(0,0,1))
+	tree.Root.Children[0].AddChild(NewNode(0,0,2))
+	tree.Root.Children[0].AddChild(NewNode(0,0,3))
+	tree.Root.Children[0].AddChild(NewNode(0,0,4))
+	tree.Root.Children[0].Children[2].AddChild(NewNode(0,0,7))
+	tree.Root.Children[0].Children[0].AddChild(NewNode(0,0,8))
+	tree.Root.Children[0].Children[0].AddChild(NewNode(0,0,9))
+	tree.Root.AddChild(NewNode(0,0,5))
+	tree.Root.Children[1].AddChild(NewNode(0,0,6))
+	tree.UpdateSizes()
+	knapsack.SortChildren(tree)
+	tree.Print()*/
 
-	tree := tests.GenerateTree(countVertex, maxWeight, maxProfit)
-	fmt.Println(tests.FindMinOptimalSubset(tree, bound))
-	fmt.Println(knapsack.FindMinOptimalSubset(tree, bound))
+	tree := Tree{Root:NewNode(0,0,0)}
+	tree.Root.AddChild(NewNode(0,0,1))
+	tree.Root.AddChild(NewNode(0,0,2))
+	tree.Root.Children[1].AddChild(NewNode(0,0,3))
+	tree.Root.Children[1].AddChild(NewNode(0,0,4))
+	tree.Root.Children[1].Children[1].AddChild(NewNode(0,0,5))
+	tree.Root.Children[1].Children[1].AddChild(NewNode(0,0,6))
+	tree.Root.Children[1].Children[1].Children[1].AddChild(NewNode(0,0,7))
+	tree.Root.Children[1].Children[1].Children[1].AddChild(NewNode(0,0,8))
+	tree.Root.Children[1].Children[1].Children[1].AddChild(NewNode(0,0,9))
+	tree.Root.Children[1].Children[1].Children[1].AddChild(NewNode(0,0,10))
+	tree.Root.Children[1].Children[1].Children[1].AddChild(NewNode(0,0,11))
+	tree.Root.Children[1].Children[1].Children[1].AddChild(NewNode(0,0,12))
+	tree.Root.Children[1].Children[1].Children[1].AddChild(NewNode(0,0,13))
+	tree.Root.Children[1].Children[1].Children[1].AddChild(NewNode(0,0,14))
+	tree.Root.Children[1].Children[1].Children[1].AddChild(NewNode(0,0,15))
+	tree.Root.Children[1].Children[1].Children[1].AddChild(NewNode(0,0,16))
+	tree.Root.Children[1].Children[1].Children[1].AddChild(NewNode(0,0,17))
+	tree.Root.Children[1].Children[1].Children[1].AddChild(NewNode(0,0,18))
+	tree.UpdateSizes()
 
-	tree.Print()
-	/*tree := tests.GenerateTree(3, 10, 10)
-	tree.Print()
-	tests.FindMinOptimalSubset(tests.GenerateTree(4,10,10), 100)
-	/*root := NewNode(1, 1)
-	root.AddChild(NewNode(2, 2))
-	root.AddChild(NewNode(3, 3))
-	root.AddChild(NewNode(4, 4))
-	root.AddChild(NewNode(9, 0))
-	root.Children[0].AddChild(NewNode(6, 6))
-	root.Children[0].AddChild(NewNode(7, 7))
-	root.Children[0].AddChild(NewNode(8, 8))
-	root.Children[1].AddChild(NewNode(9, 9))
-	root.Children[1].AddChild(NewNode(10, 10))
-	root.Children[3].AddChild(NewNode(0, 100))
-	root.Children[3].AddChild(NewNode(12, 12))
-	root.Children[3].AddChild(NewNode(13, 13))
-	root.Children[3].AddChild(NewNode(14, 14))
-	tree := Tree{root}
+	tree1, tree2, split := SplitTree(tree)
+	tree1.Print()
+	fmt.Println()
+	tree2.Print()
+	fmt.Println()
+	fmt.Println(split.ID)
 
-	fmt.Print(FindMinOptimalSubset(tree, 10))
-	tree.Print()
-	//*/
-}
+	/*tree := Tree{Root:NewNode(0,0,0)}
+	tree.Root.AddChild(NewNode(0,0,1))
+	tree.Root.AddChild(NewNode(0,0,2))
+	tree.UpdateSizes()
+	tree1, tree2, split := SplitTree(tree)
+	tree1.Print()
+	fmt.Println()
+	tree2.Print()
+	fmt.Println()
+	fmt.Println(split.ID)*/
+	}

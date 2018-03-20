@@ -50,9 +50,9 @@ func FindMinOptimalSubset(tree Tree, bound int) (float64, []*Node) {
 		if pred[i][w] == true {
 			optimalSubset = append(optimalSubset, currentNode)
 			w -= currentNode.Weight
-			i--;
+			i--
 		} else {
-			i -= currentNode.Size;
+			i -= currentNode.Size
 		}
 	}
 

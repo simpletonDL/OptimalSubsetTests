@@ -34,6 +34,39 @@ func TestTime(t *testing.T) {
 	}
 }
 
+func TestNewKnapsack(t *testing.T) {
+	Max := -1;
+	for i := 0; i <= 1000; i++ {
+		tree := GenerateTree(20, 100, 1.0)
+		optimalAnswer, _ := FindMinOptimalSubset(tree, 500)
+		knapsackAnswer, MaxSize := knapsack.FindProbability(tree, 500)
+		if Max < MaxSize {
+			Max = MaxSize
+		}
+		fmt.Println(optimalAnswer, knapsackAnswer, MaxSize, Max, (optimalAnswer - knapsackAnswer) < 0.000000001)
+	}
+}
+
+func TestSplit(t *testing.T) {
+	N := 1000
+	low := N /3
+	up := (2 * N) / 3
+	for i := 0; i < 200000; i++ {
+		tree := GenerateTree(N, 10, 1.0)
+		tree.UpdateSizes()
+		tree1, tree2 , _:= knapsack.SplitTree(tree)
+		tree1.UpdateSizes()
+		tree2.UpdateSizes()
+		s1 := tree1.GetSize()
+		s2 := tree2.GetSize()
+		if low <= s1 && s1 <= up || low <= s2 && s2 <= up + 1 {
+			//fmt.Println(s1, s2, low, up)
+		} else {
+			t.Error(s1, s2, "is not in range [", low, ",", up,"]")
+		}
+	}
+}
+
 func testSingle() bool {
 	countVertex := 20
 	maxWeight := 30
