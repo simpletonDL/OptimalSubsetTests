@@ -18,10 +18,11 @@ func (s bySubtreeSize) Less(i, j int) bool {
 }
 
 /*
-Требует UpdateSize(), и смысла сплитить дерево из одной вершины нет
+Требует UpdateSize(), и смысла сплитить дерево из одной вершины нет.
+Для >= 2 вершин сплитит просто прекрасно :D
+Возвращает верхнее дерова, нижнее дерево и узел разбиения
  */
 func SplitTree(tree Tree) (Tree, Tree, *Node) {
-	// Проверить случай с 0 и 1 вершиной
 	n := tree.GetSize()
 	if n < 2 {
 		return tree, Tree{}, tree.Root
@@ -45,7 +46,8 @@ func SplitTree(tree Tree) (Tree, Tree, *Node) {
 			if i == len(ptr.Children) - 1 { // Если была только одна итерация
 				newRoot = ptr.Children[i]
 			} else {
-				newRoot = NewNode(0, 1, -1) // profit = 1 для умножкния, для сложение нужен 0
+				newRoot = NewNode(0, 0, -1) // profit = 1 для умножкния, для сложение нужен 0
+				newRoot.IsRequired = true
 				newRoot.Children = make([]*Node, len(ptr.Children)-i)
 				copy(newRoot.Children, ptr.Children[i:])
 			}

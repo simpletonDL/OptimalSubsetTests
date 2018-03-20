@@ -3,17 +3,19 @@ package knapsack
 import (
 	. "project/OptimalSubsetTests/tries"
 	"math"
+	"fmt"
 )
 
-//Возвращает массив [0..bound] ответов
-func FindProbability(tree Tree, bound int) (float64, int) {
-	maxSize := 0
+/*	Возвращает массив [0..bound] ответов по
+	максимизации сложения с учетом необходимых вершин
+ */
+func FindOptimalProbability(tree Tree, bound int) ([]float64) {
 	n := tree.UpdateSizes() // Можно с оптиммизировать, но все равно залазит в O(nW)
 
 	dp := make(map[int] []float64)
 	dp[0] = make([]float64, bound + 1) // [0..bound], initial [0..0]
 	for w := range dp[0] {
-		dp[0][w] = 1
+		dp[0][w] = 0
 	}
 
 	current := 0
@@ -33,14 +35,18 @@ func FindProbability(tree Tree, bound int) (float64, int) {
 		current++
 		dp[current] = make([]float64, bound + 1)
 
-		if maxSize < len(dp) {
-			maxSize = len(dp)
-		}
-
 		for w := 0; w <= bound; w++ {
-			dp[current][w] = dp[current-node.Size][w] // не берём
-			if w-node.Weight >= 0 { // можем взять
-				dp[current][w] = math.Min(dp[current][w], dp[current-1][w-node.Weight] * node.Profit) // Минимизируем вероятность
+			if node.IsRequired {
+				if w - node.Weight < 0 {
+					dp[current][w] = math.Inf(-1)
+				} else {
+					dp[current][w] = dp[current-1][w-node.Weight] + node.Profit
+				}
+			} else {
+				dp[current][w] = dp[current-node.Size][w] // не берём
+				if w - node.Weight >= 0 { // можем взять
+					dp[current][w] = math.Max(dp[current][w], dp[current-1][w-node.Weight] + node.Profit) // Максимизируем сложение
+				}
 			}
 		}
 
@@ -51,5 +57,53 @@ func FindProbability(tree Tree, bound int) (float64, int) {
 		//fmt.Println(dp, "afrter current", current)
 	}
 	dfs(tree.Root)
-	return dp[n][bound], maxSize
+	//dp[0][i] = 0 for any i, so it is not correct
+	return dp[n]
+}
+
+func FindOptimalSubset(tree Tree, W int) (float64, int, int) {
+	tree.UpdateSizes()
+
+	treeUp, treeDown, nodeSplit := SplitTree(tree)
+	dpDown := FindOptimalProbability(treeDown, W)
+
+	copyTreeUp := treeUp.Copy()
+	copyNodeSplit := copyTreeUp.FindById(nodeSplit.ID)
+
+	//case 1: берём nodeSplit, nodeSplit -> treeUp
+	if !nodeSplit.IsRequired {
+		nodeSplit.SetRequired()
+	}
+	dpUp := FindOptimalProbability(treeUp, W)
+
+	ansWithSplit, upW, downW := math.Inf(-1), -1, -1
+	for i := 0; i <= W; i++ {
+		if ansWithSplit < dpUp[i] + dpDown[W-i] {
+			ansWithSplit, upW, downW = dpUp[i]+dpDown[W-i], i, W-i
+		}
+	}
+
+	//case 2: не берём copyNodeSplit -> copyTreeUp
+	if !copyNodeSplit.IsRequired {
+		ansWithoutSplit := math.Inf(-1)
+		if copyNodeSplit.IsRoot() {
+			ansWithoutSplit = 0
+		} else {
+			parent := copyNodeSplit.Parent
+			parent.Children = parent.Children[:len(parent.Children)-1] // Удаляем все поддерево copyNodeSplit
+			ansWithoutSplit = FindOptimalProbability(copyTreeUp, W)[W]
+		}
+		if ansWithSplit > ansWithoutSplit {
+			fmt.Print("case: 1")
+			return ansWithSplit, -1, -1
+		} else {
+			fmt.Print("case: 2")
+			return ansWithoutSplit, -1, -1
+		}
+	} else {
+		fmt.Print("case: 3")
+		return ansWithSplit, upW, downW
+	}
+
+	return 0,0,0
 }

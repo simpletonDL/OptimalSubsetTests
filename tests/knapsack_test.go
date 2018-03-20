@@ -7,6 +7,7 @@ import (
 	"math"
 	"sort"
 	"time"
+	"project/OptimalSubsetTests/tries"
 )
 
 func sum(args ...int) {
@@ -28,7 +29,7 @@ func TestTime(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		tree := GenerateTree(10000, 1000, 1.0)
 		timeNow := time.Now()
-		knapsack.FindMinOptimalSubset(tree, 100000)
+		knapsack.SimpleKnapsack(tree, 100000)
 		time := time.Now().Sub(timeNow).Seconds()
 		fmt.Println(time)
 	}
@@ -39,11 +40,8 @@ func TestNewKnapsack(t *testing.T) {
 	for i := 0; i <= 1000; i++ {
 		tree := GenerateTree(20, 100, 1.0)
 		optimalAnswer, _ := FindMinOptimalSubset(tree, 500)
-		knapsackAnswer, MaxSize := knapsack.FindProbability(tree, 500)
-		if Max < MaxSize {
-			Max = MaxSize
-		}
-		fmt.Println(optimalAnswer, knapsackAnswer, MaxSize, Max, (optimalAnswer - knapsackAnswer) < 0.000000001)
+		knapsackAnswer := knapsack.FindOptimalProbability(tree, 500)[500]
+		fmt.Println(optimalAnswer, knapsackAnswer, Max, (optimalAnswer - knapsackAnswer) < 0.000000001)
 	}
 }
 
@@ -74,7 +72,7 @@ func testSingle() bool {
 
 	tree := GenerateTree(countVertex, maxWeight, maxProfit)
 	for targetBound := 0; targetBound <= countVertex * maxWeight; targetBound+=10 {
-		optimalAnswer, optimalSubset := knapsack.FindMinOptimalSubset(tree, targetBound)
+		optimalAnswer, optimalSubset := knapsack.SimpleKnapsack(tree, targetBound)
 		bruteforceAnswer, bruteforceSubset := FindMinOptimalSubset(tree, targetBound)
 
 		optimalSubsetID := []int{}
@@ -114,4 +112,39 @@ func testSingle() bool {
 	}
 
 	return true
+}
+
+func TestNew(t *testing.T) {
+	N := 1000
+	MaxWeight := 5
+	W := 1000
+	MaxProfit := 10.0
+	for i := 0; i <= 1000; i++ {
+		fmt.Println("Test:", i)
+
+		tree := GenerateTree(N, MaxWeight, MaxProfit)
+		treeCopy := tree.Copy()
+
+		a := knapsack.FindOptimalProbability(tree, W)[W]
+		b, upW, dowW:= knapsack.FindOptimalSubset(tree, W)
+		fmt.Println()
+		fmt.Println("Answers: ", a, b)
+		if math.Abs(a - b) > 0.0000001 {
+			t.Error("Error:")
+
+			sum := 0
+			var dfs func(node *tries.Node)
+			dfs = func(node *tries.Node) {
+				if node.IsRequired {
+					sum += node.Weight
+				}
+				for _, child := range node.Children {
+					dfs(child)
+				}
+			}
+			dfs(treeCopy.Root)
+			fmt.Println(upW, dowW, sum)
+			return
+		}
+	}
 }

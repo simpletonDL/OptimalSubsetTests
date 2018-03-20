@@ -7,7 +7,7 @@ import (
 /*
 	dp[0..bound][0..n], vertexes numerated 1..n
 */
-func FindMinOptimalSubset(tree Tree, bound int) (float64, []*Node) {
+func SimpleKnapsack(tree Tree, bound int) (float64, []*Node) {
 	n := tree.UpdateSizes()
 	dp := make([][]float64, n+1)
 	pred := make([][]bool, n+1)
