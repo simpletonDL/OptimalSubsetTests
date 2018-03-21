@@ -7,6 +7,7 @@ import (
 	"math"
 	"sort"
 	"time"
+	"project/OptimalSubsetTests/tries"
 )
 
 func sum(args ...int) {
@@ -114,19 +115,44 @@ func testSingle() bool {
 }
 
 func TestFullIteration(t *testing.T) {
-	N := 1000
+	N := 20
 	MaxWeight := 10
-	W := 2000
+	W := 30
 	MaxProfit := 10.0
 
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 20; i++ {
 		fmt.Println("Test:", i)
 		tree := GenerateTree(N, MaxWeight, MaxProfit)
-		ansRequired, _ := knapsack.SimpleKnapsack(tree, W)
-		ansGet := knapsack.FindOptimalSubset(tree, W)
+		ansRequired, setRequired := knapsack.SimpleKnapsack(tree, W)
+		ansGet, setGet := knapsack.FindOptimalSubset(tree, W)
 		fmt.Println(ansRequired, ansGet)
+		fmt.Println(NodeToID(setGet))
+		fmt.Println(NodeToID(setRequired))
 		if math.Abs(ansRequired - ansGet) > 0.00000001 {
 			t.Error("You are looser")
 		}
 	}
+}
+
+func TestTimeFinal(t *testing.T) {
+	tree := GenerateTree(10000, 10,10)
+
+	timeNow := time.Now()
+	knapsack.SimpleKnapsack(tree, 10000)
+	time1 := time.Now().Sub(timeNow).Seconds()
+	fmt.Println(time1)
+
+	timeNow = time.Now()
+	knapsack.FindOptimalSubset(tree, 10000)
+	time2 := time.Now().Sub(timeNow).Seconds()
+	fmt.Println(time2)
+}
+
+func NodeToID(nodes []*tries.Node) []int {
+	var xs []int
+	for _, node := range nodes {
+		xs = append(xs, node.ID)
+	}
+	sort.Ints(xs)
+	return xs
 }

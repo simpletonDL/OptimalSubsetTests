@@ -60,15 +60,15 @@ func FindOptimalProbability(tree Tree, bound int) ([]float64) {
 	return dp[n]
 }
 
-func FindOptimalSubset(tree Tree, W int) (float64) {
+func FindOptimalSubset(tree Tree, W int) (float64, []*Node) {
 	tree.UpdateSizes()
 
 	if tree.GetSize() == 1 {
 		root := tree.Root
-		if W - root.Weight >= 0 {
-			return root.Profit
+		if W - root.Weight >= 0 && root.ID != -1 {
+			return root.Profit, []*Node{root}
 		} else {
-			return 0
+			return 0, []*Node{}
 		}
 	}
 
@@ -111,15 +111,19 @@ func FindOptimalSubset(tree Tree, W int) (float64) {
 
 		if ansWithSplit > ansWithoutSplit {
 			//fmt.Print("case: 1")
-			return FindOptimalSubset(treeUp, upW) + FindOptimalSubset(treeDown, downW)
+			ansUp, setUp := FindOptimalSubset(treeUp, upW)
+			ansDown, setDown := FindOptimalSubset(treeDown, downW)
+			return  ansUp + ansDown, append(setUp, setDown...)
 		} else {
 			//fmt.Print("case: 2")
 			return FindOptimalSubset(copyTreeUp, W)
 		}
 	} else {
 		//fmt.Print("case: 3")
-		return FindOptimalSubset(treeUp, upW) + FindOptimalSubset(treeDown, downW)
+		ansUp, setUp := FindOptimalSubset(treeUp, upW)
+		ansDown, setDown := FindOptimalSubset(treeDown, downW)
+		return  ansUp + ansDown, append(setUp, setDown...)
 	}
 
-	return 0.0
+	return 0.0, []*Node{}
 }
