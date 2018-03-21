@@ -100,7 +100,7 @@ func (node *Node) SetRequired()  {
 }
 
 func (node *Node) Print() {
-	fmt.Print("[", node.IsRequired, " ")
+	fmt.Print("[", node, " ")
 	for _, ptr := range node.Children {
 		ptr.Print()
 	}

@@ -45,6 +45,7 @@ func SplitTree(tree Tree) (Tree, Tree, *Node) {
 			var newRoot *Node
 			if i == len(ptr.Children) - 1 { // Если была только одна итерация
 				newRoot = ptr.Children[i]
+				newRoot.Parent = nil
 			} else {
 				newRoot = NewNode(0, 0, -1) // profit = 1 для умножкния, для сложение нужен 0
 				newRoot.IsRequired = true

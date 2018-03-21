@@ -1,8 +1,9 @@
 package main
 
 import (
-	"math"
 	"fmt"
+	"project/OptimalSubsetTests/knapsack"
+	"project/OptimalSubsetTests/tests"
 )
 
 func main() {
@@ -67,9 +68,7 @@ func main() {
 	fmt.Println(knapsack.FindOptimalProbability(tree, 10)[10])
 	fmt.Print(knapsack.FindOptimalSubset(tree, 10))*/
 
-	inf := math.Inf(-1)
-	fmt.Println(inf + 4534535345)
-	/*tree := tests.GenerateTree(4, 10,10)
-	tree.Print() */
-
+	tree := tests.GenerateTree(10, 10,10)
+	fmt.Println(knapsack.FindOptimalProbability(tree, 5)[5])
+	fmt.Println()
 }

@@ -15,7 +15,7 @@ func SimpleKnapsack(tree Tree, bound int) (float64, []*Node) {
 		dp[i] = make([]float64, bound+1)
 		pred[i] = make([]bool, bound+1)
 		for j := 0; j < len(dp[i]); j++ {
-			dp[i][j] = 1
+			dp[i][j] = 0
 		}
 	}
 
@@ -28,9 +28,9 @@ func SimpleKnapsack(tree Tree, bound int) (float64, []*Node) {
 		}
 
 		for w := 0; w <= bound; w++ {
-			if w - node.Weight >= 0 && node.Profit * dp[i-1][w-node.Weight] < dp[i-node.Size][w] {
+			if w - node.Weight >= 0 && node.Profit + dp[i-1][w-node.Weight] > dp[i-node.Size][w] {
 				pred[i][w] = true
-				dp[i][w] = node.Profit * dp[i-1][w-node.Weight]
+				dp[i][w] = node.Profit + dp[i-1][w-node.Weight]
 			} else {
 				pred[i][w] = false
 				dp[i][w] = dp[i-node.Size][w]

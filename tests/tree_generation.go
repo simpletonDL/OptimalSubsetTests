@@ -20,9 +20,9 @@ func GenerateTree(n int, maxWeight int, maxProfit float64) Tree {
 		parentID := random.Intn(len(nodes))
 		newNode := generateNode(maxWeight, maxProfit, i)
 		nodes[parentID].AddChild(newNode)
-		if random.Intn(10) >= 9 {
+		/*if random.Intn(10) >= 9 {
 			newNode.SetRequired()
-		}
+		}*/
 		nodes = append(nodes, newNode)
 	}
 	return genTree

@@ -3,7 +3,6 @@ package knapsack
 import (
 	. "project/OptimalSubsetTests/tries"
 	"math"
-	"fmt"
 )
 
 /*	Возвращает массив [0..bound] ответов по
@@ -61,8 +60,17 @@ func FindOptimalProbability(tree Tree, bound int) ([]float64) {
 	return dp[n]
 }
 
-func FindOptimalSubset(tree Tree, W int) (float64, int, int) {
+func FindOptimalSubset(tree Tree, W int) (float64) {
 	tree.UpdateSizes()
+
+	if tree.GetSize() == 1 {
+		root := tree.Root
+		if W - root.Weight >= 0 {
+			return root.Profit
+		} else {
+			return 0
+		}
+	}
 
 	treeUp, treeDown, nodeSplit := SplitTree(tree)
 	dpDown := FindOptimalProbability(treeDown, W)
@@ -87,23 +95,31 @@ func FindOptimalSubset(tree Tree, W int) (float64, int, int) {
 	if !copyNodeSplit.IsRequired {
 		ansWithoutSplit := math.Inf(-1)
 		if copyNodeSplit.IsRoot() {
-			ansWithoutSplit = 0
+			if copyNodeSplit.IsRequired {
+				ansWithoutSplit = math.Inf(-1)
+			} else {
+				ansWithoutSplit = 0
+			}
 		} else {
+			/*copyTreeUp.Print()
+			fmt.Println()
+			fmt.Println(copyNodeSplit)*/
 			parent := copyNodeSplit.Parent
 			parent.Children = parent.Children[:len(parent.Children)-1] // Удаляем все поддерево copyNodeSplit
 			ansWithoutSplit = FindOptimalProbability(copyTreeUp, W)[W]
 		}
+
 		if ansWithSplit > ansWithoutSplit {
-			fmt.Print("case: 1")
-			return ansWithSplit, -1, -1
+			//fmt.Print("case: 1")
+			return FindOptimalSubset(treeUp, upW) + FindOptimalSubset(treeDown, downW)
 		} else {
-			fmt.Print("case: 2")
-			return ansWithoutSplit, -1, -1
+			//fmt.Print("case: 2")
+			return FindOptimalSubset(copyTreeUp, W)
 		}
 	} else {
-		fmt.Print("case: 3")
-		return ansWithSplit, upW, downW
+		//fmt.Print("case: 3")
+		return FindOptimalSubset(treeUp, upW) + FindOptimalSubset(treeDown, downW)
 	}
 
-	return 0,0,0
+	return 0.0
 }

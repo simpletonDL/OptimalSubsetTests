@@ -7,7 +7,6 @@ import (
 	"math"
 	"sort"
 	"time"
-	"project/OptimalSubsetTests/tries"
 )
 
 func sum(args ...int) {
@@ -114,37 +113,20 @@ func testSingle() bool {
 	return true
 }
 
-func TestNew(t *testing.T) {
+func TestFullIteration(t *testing.T) {
 	N := 1000
-	MaxWeight := 5
-	W := 1000
+	MaxWeight := 10
+	W := 2000
 	MaxProfit := 10.0
-	for i := 0; i <= 1000; i++ {
+
+	for i := 0; i < 100; i++ {
 		fmt.Println("Test:", i)
-
 		tree := GenerateTree(N, MaxWeight, MaxProfit)
-		treeCopy := tree.Copy()
-
-		a := knapsack.FindOptimalProbability(tree, W)[W]
-		b, upW, dowW:= knapsack.FindOptimalSubset(tree, W)
-		fmt.Println()
-		fmt.Println("Answers: ", a, b)
-		if math.Abs(a - b) > 0.0000001 {
-			t.Error("Error:")
-
-			sum := 0
-			var dfs func(node *tries.Node)
-			dfs = func(node *tries.Node) {
-				if node.IsRequired {
-					sum += node.Weight
-				}
-				for _, child := range node.Children {
-					dfs(child)
-				}
-			}
-			dfs(treeCopy.Root)
-			fmt.Println(upW, dowW, sum)
-			return
+		ansRequired, _ := knapsack.SimpleKnapsack(tree, W)
+		ansGet := knapsack.FindOptimalSubset(tree, W)
+		fmt.Println(ansRequired, ansGet)
+		if math.Abs(ansRequired - ansGet) > 0.00000001 {
+			t.Error("You are looser")
 		}
 	}
 }
