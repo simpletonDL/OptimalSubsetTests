@@ -1,12 +1,7 @@
 package main
 
-import (
-	"fmt"
-	"project/OptimalSubsetTests/knapsack"
-	"project/OptimalSubsetTests/tests"
-)
-
 func main() {
+
 	/*tree := Tree{Root:NewNode(0,0,0)}
 	tree.Root.AddChild(NewNode(0,0,1))
 	tree.Root.Children[0].AddChild(NewNode(0,0,2))
@@ -67,8 +62,4 @@ func main() {
 	/*tree := tests.GenerateTree(4, 10, 10)
 	fmt.Println(knapsack.FindOptimalProbability(tree, 10)[10])
 	fmt.Print(knapsack.FindOptimalSubset(tree, 10))*/
-
-	tree := tests.GenerateTree(10, 10,10)
-	fmt.Println(knapsack.FindOptimalProbability(tree, 5)[5])
-	fmt.Println()
 }

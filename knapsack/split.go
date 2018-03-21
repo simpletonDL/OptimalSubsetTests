@@ -3,7 +3,10 @@ package knapsack
 import (
 	. "project/OptimalSubsetTests/tries"
 	"sort"
+	"time"
 )
+
+var S_time float64 = 0.0
 
 type bySubtreeSize []*Node
 
@@ -23,8 +26,10 @@ func (s bySubtreeSize) Less(i, j int) bool {
 Возвращает верхнее дерова, нижнее дерево и узел разбиения
  */
 func SplitTree(tree Tree) (Tree, Tree, *Node) {
+	timeNow := time.Now()
 	n := tree.GetSize()
 	if n < 2 {
+		S_time += time.Now().Sub(timeNow).Seconds()
 		return tree, Tree{}, tree.Root
 	}
 
@@ -53,11 +58,12 @@ func SplitTree(tree Tree) (Tree, Tree, *Node) {
 				copy(newRoot.Children, ptr.Children[i:])
 			}
 			ptr.Children = ptr.Children[:i]
-
+			S_time += time.Now().Sub(timeNow).Seconds()
 			return tree, Tree{Root:newRoot}, ptr
 		}
 	}
 	//Вот здесь бы exeption кидать
+	S_time += time.Now().Sub(timeNow).Seconds()
 	return Tree{}, Tree{}, nil
 }
 

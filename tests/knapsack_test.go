@@ -30,8 +30,8 @@ func TestTime(t *testing.T) {
 		tree := GenerateTree(10000, 1000, 1.0)
 		timeNow := time.Now()
 		knapsack.SimpleKnapsack(tree, 100000)
-		time := time.Now().Sub(timeNow).Seconds()
-		fmt.Println(time)
+		time1 := time.Now().Sub(timeNow).Seconds()
+		fmt.Println(time1)
 	}
 }
 
@@ -115,12 +115,12 @@ func testSingle() bool {
 }
 
 func TestFullIteration(t *testing.T) {
-	N := 20
+	N := 1000
 	MaxWeight := 10
-	W := 30
+	W := 500
 	MaxProfit := 10.0
 
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 100; i++ {
 		fmt.Println("Test:", i)
 		tree := GenerateTree(N, MaxWeight, MaxProfit)
 		ansRequired, setRequired := knapsack.SimpleKnapsack(tree, W)
@@ -135,17 +135,22 @@ func TestFullIteration(t *testing.T) {
 }
 
 func TestTimeFinal(t *testing.T) {
-	tree := GenerateTree(10000, 10,10)
+	N := 10000
+	MAX_WEIGHT := 10
+	W := 10000
+	MAX_PROFIT := 10.0
+
+	tree := GenerateTree(N, MAX_WEIGHT, MAX_PROFIT)
 
 	timeNow := time.Now()
-	knapsack.SimpleKnapsack(tree, 10000)
+	knapsack.SimpleKnapsack(tree, W)
 	time1 := time.Now().Sub(timeNow).Seconds()
 	fmt.Println(time1)
 
 	timeNow = time.Now()
-	knapsack.FindOptimalSubset(tree, 10000)
+	knapsack.FindOptimalSubset(tree, W)
 	time2 := time.Now().Sub(timeNow).Seconds()
-	fmt.Println(time2)
+	fmt.Println("FOP time:", knapsack.FOP_time, "FOP_count / NW:", float64(knapsack.FOP_count) / float64(N*W), "All time:", time2)
 }
 
 func NodeToID(nodes []*tries.Node) []int {

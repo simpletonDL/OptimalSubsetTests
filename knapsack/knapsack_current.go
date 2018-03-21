@@ -1,15 +1,26 @@
 package knapsack
 
 import (
-	. "project/OptimalSubsetTests/tries"
+	"time"
 	"math"
 )
 
+import (
+	. "project/OptimalSubsetTests/tries"
+)
+
+var FOP_time float64 = 0.0
+var FOP_count int = 0
+
 /*	Возвращает массив [0..bound] ответов по
 	максимизации сложения с учетом необходимых вершин
- */
+*/
+
 func FindOptimalProbability(tree Tree, bound int) ([]float64) {
 	n := tree.UpdateSizes() // Можно с оптиммизировать, но все равно залазит в O(nW)
+
+	FOP_count += tree.GetSize() * bound
+	timeNow := time.Now()
 
 	dp := make(map[int] []float64)
 	dp[0] = make([]float64, bound + 1) // [0..bound], initial [0..0]
@@ -56,9 +67,12 @@ func FindOptimalProbability(tree Tree, bound int) ([]float64) {
 		//fmt.Println(dp, "afrter current", current)
 	}
 	dfs(tree.Root)
-	//dp[0][i] = 0 for any i, so it is not correct
+
+	FOP_time += time.Now().Sub(timeNow).Seconds()
 	return dp[n]
 }
+
+
 
 func FindOptimalSubset(tree Tree, W int) (float64, []*Node) {
 	tree.UpdateSizes()
