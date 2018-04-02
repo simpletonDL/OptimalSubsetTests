@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 func main() {
 
 	/*tree := Tree{Root:NewNode(0,0,0)}

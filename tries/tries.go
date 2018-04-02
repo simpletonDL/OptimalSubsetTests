@@ -4,6 +4,16 @@ import (
 	"fmt"
 )
 
+/**
+Тут описаны структуры для работы с деревьями,
+собственно само дерево Tree и его узлы Node,
+а так же всякие нужные функции, имя которых говорит
+само за себя. Единственная по первости непонятная
+функция, это SetRequired. Она описана ниже.
+Ну и забавная функция Print, выводящее дерево
+в виде скобочной последовательности.
+ */
+
 type Tree struct {
 	Root *Node
 }
@@ -12,9 +22,6 @@ func (tree Tree) GetSize() int {
 	return tree.Root.Size
 }
 
-/*
-nil если не найдено
- */
 func (tree Tree) FindById(ID int) *Node {
 	var target *Node
 	var dfs func(*Node)
@@ -87,7 +94,12 @@ func (node *Node) UpdateSizes() (int) {
 	return node.Size
 }
 
-//Только 1 или 2
+/**
+Устанавливает значение IsRequired true,
+это означает, что этот node должен быть
+взят в его дереве (а значит и все его
+предки).
+ */
 func (node *Node) SetRequired()  {
 	var dfs func(*Node)
 	dfs = func (ptr *Node) {

@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-var S_time float64 = 0.0
+var S_time float64 = 0.0 // Время исполнения сплита
 
 type bySubtreeSize []*Node
 
@@ -39,7 +39,6 @@ func SplitTree(tree Tree) (Tree, Tree, *Node) {
 	ptr := tree.Root
 
 	for len(ptr.Children) != 0 && ptr.Children[len(ptr.Children) - 1].Size > up {
-		//fmt.Println(ptr.Children[len(ptr.Children) - 1].Size)
 		ptr = ptr.Children[len(ptr.Children) - 1]
 	}
 	// Первый раз, когда правый ребёнок <= up или нет детей
@@ -62,11 +61,14 @@ func SplitTree(tree Tree) (Tree, Tree, *Node) {
 			return tree, Tree{Root:newRoot}, ptr
 		}
 	}
-	//Вот здесь бы exeption кидать
+	//Вот здесь бы exeption кидать, ибо не должно до сюда дело доходить
 	S_time += time.Now().Sub(timeNow).Seconds()
 	return Tree{}, Tree{}, nil
 }
 
+/**
+Сортирует поддеревья дерева по их размерам
+ */
 func SortChildren(tree Tree)  {
 	var dfs func(*Node)
 	dfs = func (node *Node) {

@@ -7,11 +7,18 @@ import (
 )
 var random = rand.New(rand.NewSource(time.Now().UnixNano()))
 
+/**
+Генерит рандомные тест
+ */
 func generateNode(maxWeight int, maxProfit float64, id int) *Node {
 	newNode := NewNode(1 + random.Intn(maxWeight), float64(random.Float64() * maxProfit), id)
 	return newNode
 }
 
+/**
+Генерит рандомное дерево из n вершин, и из тестов максимального
+весв и максимального профита maxWeight и maxProfit соответсвенно.
+ */
 func GenerateTree(n int, maxWeight int, maxProfit float64) Tree {
 	genTree := Tree{Root: generateNode(maxWeight, maxProfit, 0)}
 	nodes := []*Node{genTree.Root}
