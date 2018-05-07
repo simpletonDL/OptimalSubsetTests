@@ -3,11 +3,10 @@ package tests
 import (
 	"testing"
 	"fmt"
-	"project/OptimalSubsetTests/knapsack"
+	"github.com/simpletonDL/OptimalSubsetTests/knapsack"
 	"math"
-	"sort"
 	"time"
-	"project/OptimalSubsetTests/tries"
+	. "github.com/simpletonDL/OptimalSubsetTests/trees"
 )
 
 func TestNewKnapsack(t *testing.T) {
@@ -47,7 +46,7 @@ func TestSplit(t *testing.T) {
 	}
 }
 
-func TestSingle(t *testing.T) {
+/*func TestSingle(t *testing.T) {
 	countVertex := 20
 	maxWeight := 30
 	maxProfit := 1.0
@@ -91,17 +90,17 @@ func TestSingle(t *testing.T) {
 		}
 
 	}
-}
+}*/
 
 func TestFullIteration(t *testing.T) {
-	N := 1000
-	MaxWeight := 10
-	W := 500
+	N := 20
+	var W int64 = 50
+	MaxWeight := 50
 	MaxProfit := 10.0
 	for i := 0; i < 100; i++ {
 		fmt.Println("Test:", i)
 		tree := GenerateTree(N, MaxWeight, MaxProfit)
-		ansRequired, setRequired := knapsack.SimpleKnapsack(tree, W)
+		ansRequired, setRequired := FindMinOptimalSubset(tree, W)
 		ansGet, setGet := knapsack.FindOptimalAnswerAndSubset(tree, W)
 		fmt.Println(ansRequired, ansGet)
 		fmt.Println(NodeToID(setGet))
@@ -122,7 +121,7 @@ func TestFullIteration(t *testing.T) {
 func TestFOAS_time(t *testing.T) {
 	N := 10000
 	MAXWEIGHT := 10
-	W := 10000
+	var W int64 = 10000
 	MAXPROFIT := 10.0
 
 	var divTime []float64
@@ -163,9 +162,9 @@ func TestFOAS_time(t *testing.T) {
 10^8 не тестировать.
  */
 func TestFOPcompareFOAStime(t *testing.T) {
-	N := 10000
-	MAXWEIGHT := 10
-	W := 10000
+	var N int = 10000
+	MAXWEIGHT := 1000
+	var W int64 = 10000
 	MAXPROFIT := 10.0
 
 	tree := GenerateTree(N, MAXWEIGHT, MAXPROFIT)
@@ -180,8 +179,8 @@ func TestFOPcompareFOAStime(t *testing.T) {
 
 	fmt.Println("Simple knapsack time:", time1)
 	fmt.Println("Optimal knapsack time:", time2)
-	fmt.Println("Optimal dynamic time:", knapsack.FOP_dp_time)
-	fmt.Println("Optimal count records / nW:", float64(knapsack.FOP_count) / float64(N * W))
+	fmt.Println("Opt time / Simp time", time2 / time1)
+	fmt.Println("Optimal count records / nW:", float64(knapsack.FOP_count) / float64(int64(N) * W))
 }
 
 /**
@@ -204,13 +203,4 @@ func TestMap(t *testing.T) {
 	timeArr := time.Now().Sub(timeNow).Seconds()
 
 	fmt.Println(timeArr, timeMap)
-}
-
-func NodeToID(nodes []*tries.Node) []int {
-	var xs []int
-	for _, node := range nodes {
-		xs = append(xs, node.ID)
-	}
-	sort.Ints(xs)
-	return xs
 }

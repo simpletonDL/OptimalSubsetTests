@@ -1,12 +1,11 @@
 package knapsack
 
 import (
-	"time"
 	"math"
 )
 
 import (
-	. "project/OptimalSubsetTests/tries"
+	. "github.com/simpletonDL/OptimalSubsetTests/trees"
 )
 
 /**
@@ -15,7 +14,7 @@ import (
  */
 var FOP_time float64 = 0.0 // Полное время выполнения FindOptimalProbability
 var FOP_deletes_time = 0.0 // Время выполнения удалений ненужной динамики в FindOptimalProbability
-var FOP_count int = 0 // Суммарное колличество записей в динамику
+var FOP_count int64 = 0 // Суммарное колличество записей в динамику
 var FOP_dp_time = 0.0 // Время выполнения динамики
 
 
@@ -27,11 +26,11 @@ var FOP_dp_time = 0.0 // Время выполнения динамики
 	ответов.
 */
 
-func FindOptimalProbability(tree Tree, bound int) ([]float64) {
+func FindOptimalProbability(tree *Tree, bound int64) []float64 {
 	n := tree.UpdateSizes() // Можно с оптиммизировать, но все равно залазит в O(nW)
 
-	FOP_count += tree.GetSize() * bound
-	timeNow := time.Now()
+	FOP_count += int64(tree.GetSize()) * bound
+	//timeNow := time.Now()
 
 	dp := make([][]float64, n + 1)
 	dp[0] = make([]float64, bound + 1) // [0..bound], initial [0..0]
@@ -40,24 +39,26 @@ func FindOptimalProbability(tree Tree, bound int) ([]float64) {
 	}
 
 	current := 0
-	var dfs func(*Node)
+	var dfs func(*Node) // todo вынести
+
+
 	dfs = func(node *Node) {
 		leftBrother := 0
 		for i, child := range node.Children {
 			dfs(child)
 			if i != 0 {
-				timeN := time.Now()
+				//timeN := time.Now()
 				dp[leftBrother] = nil
-				FOP_deletes_time += time.Now().Sub(timeN).Seconds()
+				//FOP_deletes_time += time.Now().Sub(timeN).Seconds()
 			}
 			leftBrother = current
 		}
 
-		timeN := time.Now()
+		//timeN := time.Now()
 		current++
 		dp[current] = make([]float64, bound + 1)
 
-		for w := 0; w <= bound; w++ {
+		for w := int64(0); w <= bound; w++ {
 			if node.IsRequired {
 				if w - node.Weight < 0 {
 					dp[current][w] = math.Inf(-1)
@@ -71,19 +72,54 @@ func FindOptimalProbability(tree Tree, bound int) ([]float64) {
 				}
 			}
 		}
-		FOP_dp_time += time.Now().Sub(timeN).Seconds()
+		//FOP_dp_time += time.Now().Sub(timeN).Seconds()
 
 		if len(node.Children) != 0 {
-			timeN := time.Now()
+			//timeN := time.Now()
 			dp[current - 1] = nil
-			FOP_deletes_time += time.Now().Sub(timeN).Seconds()
+			//FOP_deletes_time += time.Now().Sub(timeN).Seconds()
 		}
 	}
 	dfs(tree.Root)
 
-	FOP_time += time.Now().Sub(timeNow).Seconds()
+	//FOP_time += time.Now().Sub(timeNow).Seconds()
 	return dp[n]
 }
+
+type treeWalkContext struct {
+	currentIndex int
+	dp           [][]float64
+	bound		 int64 // todo int
+}
+
+/*
+Возвращает номер node
+ */
+/*func treeWalk(node *Node, context *treeWalkContext) {
+	leftBrother := 0
+
+	for _, child := range node.Children {
+		treeWalk(child, context)
+
+		if leftBrother != 0 {
+			context.dp[leftBrother] = nil
+		}
+
+		leftBrother = context.currentIndex
+	}
+
+	context.currentIndex++
+	context.dp[context.currentIndex] = make([]float64, bound + 1)
+	q(node, context.currentIndex, context.dp)
+
+	if len(node.Children) != 0 {
+		context.dp[context.currentIndex - 1] = nil
+	}
+}
+
+func q(node *Node, nodeIndex int, dp [][]float64) {
+
+}*/
 
 /**
 Собственно вот и герой нашего дня - алгоритм с высотно-линейной
@@ -92,7 +128,7 @@ func FindOptimalProbability(tree Tree, bound int) ([]float64) {
 Принимает дерево и ограничение по времени, возвращает ответ и массив
 тестов.
  */
-func FindOptimalAnswerAndSubset(tree Tree, W int) (float64, []*Node) {
+func FindOptimalAnswerAndSubset(tree *Tree, W int64) (float64, []*Node) {
 	copyTree := tree.Copy()
 	return findOptimalAnswerAndSubsetHelper(copyTree, W)
 }
@@ -103,13 +139,13 @@ func FindOptimalAnswerAndSubset(tree Tree, W int) (float64, []*Node) {
 split, в зависимости от этого запускаемся рекурсивно от двух или
 одной части.
  */
-func findOptimalAnswerAndSubsetHelper(tree Tree, W int) (float64, []*Node) {
+func findOptimalAnswerAndSubsetHelper(tree *Tree, W int64) (float64, []*Node) {
 	tree.UpdateSizes()
 
 	// База
 	if tree.GetSize() == 1 {
 		root := tree.Root
-		if W - root.Weight >= 0 && root.ID != -1 {
+		if W - root.Weight >= 0 && root.ID != "" {
 			return root.Profit, []*Node{root}
 		} else {
 			return 0, []*Node{}
@@ -129,8 +165,8 @@ func findOptimalAnswerAndSubsetHelper(tree Tree, W int) (float64, []*Node) {
 	}
 	dpUp := FindOptimalProbability(treeUp, W)
 
-	ansWithSplit, upW, downW := math.Inf(-1), -1, -1
-	for i := 0; i <= W; i++ {
+	ansWithSplit, upW, downW := math.Inf(-1), int64(-1), int64(-1)
+	for i := int64(0); i <= W; i++ {
 		if ansWithSplit < dpUp[i] + dpDown[W-i] {
 			ansWithSplit, upW, downW = dpUp[i]+dpDown[W-i], i, W-i
 		}

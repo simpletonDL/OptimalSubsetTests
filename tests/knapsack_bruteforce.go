@@ -1,7 +1,7 @@
 package tests
 
 import (
-	. "project/OptimalSubsetTests/tries"
+	. "github.com/simpletonDL/OptimalSubsetTests/trees"
 	"math"
 )
 
@@ -10,7 +10,7 @@ import (
 	возвращает ответ и массив тестов. Вообщем работает
 	максимально глупо, за 2^n * n.
  */
-func FindMinOptimalSubset(tree Tree, bound int) (float64, []*Node) {
+func FindMinOptimalSubset(tree *Tree, bound int64) (float64, []*Node) {
 	tree.UpdateSizes()
 	treeSize := tree.Root.Size
 	optimalProfit := 1.0
@@ -31,7 +31,7 @@ func FindMinOptimalSubset(tree Tree, bound int) (float64, []*Node) {
 }
 
 
-func profitSubset(mask []int, tree Tree, bound int) (float64, []*Node) {
+func profitSubset(mask []int, tree *Tree, bound int64) (float64, []*Node) {
 	nodeMask := make(map[*Node]int)
 	currentNodeID := 0
 
@@ -53,7 +53,7 @@ func profitSubset(mask []int, tree Tree, bound int) (float64, []*Node) {
 		}
 	}
 
-	weight := 0
+	weight := int64(0)
 	profit := 0.0
 	var subset []*Node
 	for node := range nodeMask {

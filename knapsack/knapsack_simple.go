@@ -1,7 +1,7 @@
 package knapsack
 
 import (
-	. "project/OptimalSubsetTests/tries"
+	. "github.com/simpletonDL/OptimalSubsetTests/trees"
 )
 
 /**
@@ -9,7 +9,7 @@ import (
 	возвращает ответ и набор тестов. Не в коем случае не использовать
 	при размере таблички >= 10^9, если, конечно, нет гигов 20 оператики.
  */
-func SimpleKnapsack(tree Tree, bound int) (float64, []*Node) {
+func SimpleKnapsack(tree *Tree, bound int64) (float64, []*Node) {
 	n := tree.UpdateSizes()
 	dp := make([][]float64, n+1)
 	pred := make([][]bool, n+1)
@@ -29,7 +29,7 @@ func SimpleKnapsack(tree Tree, bound int) (float64, []*Node) {
 			buildDP(child)
 		}
 
-		for w := 0; w <= bound; w++ {
+		for w := int64(0); w <= bound; w++ {
 			if w - node.Weight >= 0 && node.Profit + dp[i-1][w-node.Weight] > dp[i-node.Size][w] {
 				pred[i][w] = true
 				dp[i][w] = node.Profit + dp[i-1][w-node.Weight]

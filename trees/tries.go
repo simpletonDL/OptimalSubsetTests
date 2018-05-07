@@ -1,7 +1,8 @@
-package tries
+package trees
 
 import (
 	"fmt"
+	"time"
 )
 
 /**
@@ -18,31 +19,32 @@ type Tree struct {
 	Root *Node
 }
 
-func (tree Tree) GetSize() int {
+func (tree *Tree) GetSize() int {
 	return tree.Root.Size
 }
 
-func (tree Tree) FindById(ID int) *Node {
-	var target *Node
-	var dfs func(*Node)
-	dfs = func(node *Node) {
-		if node.ID == ID {
-			target = node
-			return
-		} else {
-			for _, child := range node.Children {
-				dfs(child)
-			}
-		}
-	}
-	dfs(tree.Root)
-	return target
+func (tree *Tree) FindById(ID string) *Node {
+	return findByIdInternal(tree.Root, ID)
 }
 
-func (tree Tree) Copy() Tree {
-	copyTree := Tree{Root:tree.Root.Copy()}
+func findByIdInternal(node *Node, ID string) *Node {
+	if node.ID == ID {
+		return node
+	}
 
-	var dfs func(*Node, *Node)
+	for _, child := range node.Children {
+		if result := findByIdInternal(child, ID); result != nil {
+			return result
+		}
+	}
+
+	return nil
+}
+
+func (tree *Tree) Copy() *Tree {
+	return &Tree{Root:copyInternal(tree.Root)}
+
+	/*var dfs func(*Node, *Node)
 	dfs = func (node *Node, copyNode *Node) {
 		copyChildren := make([]*Node, 0)
 		for _, child := range node.Children {
@@ -55,30 +57,46 @@ func (tree Tree) Copy() Tree {
 	}
 
 	dfs(tree.Root, copyTree.Root)
-	return copyTree
+	return copyTree*/
 }
 
-func (tree Tree) UpdateSizes() int {
+func copyInternal(node *Node) *Node {
+	nodeCopy := node.Copy()
+	for _, child := range node.Children {
+		nodeCopy.AddChild(copyInternal(child))
+	}
+	return nodeCopy
+}
+
+func (tree *Tree) UpdateSizes() int {
 	return tree.Root.UpdateSizes()
 }
 
-func (tree Tree) Print() {
+func (tree *Tree) Print() {
 	tree.Root.Print()
 }
 
 type Node struct {
-	Weight int
-	Profit float64
-	Size   int
+	Weight       int64
+	Profit       float64
 
-	ID         int
-	IsRequired bool
-	Parent     *Node
-	Children   []*Node
+	ID           string
+	TimeDuration time.Duration
+
+	Size         int
+	IsRequired   bool
+	Parent       *Node
+	Children     []*Node
 }
 
-func NewNode(weight int, profit float64, id int) *Node {
-	return &Node{weight, profit, 1, id, false, nil, []*Node{}}
+func NewNode(timeByStep int64, profit float64, id string) *Node {
+	return &Node{
+		Weight:   timeByStep,
+		Profit:   profit,
+		ID:       id,
+		Size:     1,
+		// Children: []*Node{},
+	}
 }
 
 func (node *Node) AddChild(child *Node) {
@@ -101,7 +119,7 @@ func (node *Node) UpdateSizes() (int) {
 предки).
  */
 func (node *Node) SetRequired()  {
-	var dfs func(*Node)
+	var dfs func(*Node) // todo сделать for
 	dfs = func (ptr *Node) {
 		ptr.IsRequired = true
 		if ptr.Parent != nil {
@@ -112,7 +130,7 @@ func (node *Node) SetRequired()  {
 }
 
 func (node *Node) Print() {
-	fmt.Print("[", node, " ")
+	fmt.Print("[", node.ID, " ", node.Weight, " ")
 	for _, ptr := range node.Children {
 		ptr.Print()
 	}
@@ -120,9 +138,17 @@ func (node *Node) Print() {
 }
 
 func (node *Node) Copy() *Node {
-	return &Node{node.Weight, node.Profit, node.Size, node.ID, node.IsRequired, node.Parent, []*Node{}}
+	return &Node{node.Weight, node.Profit, node.ID, node.TimeDuration, node.Size, node.IsRequired, node.Parent, []*Node{}} // todo разбить
 }
 
 func (node *Node) IsRoot() bool {
 	return node.Parent == nil
+}
+
+func NodeToID(nodes []*Node) []string { // todo return map[string] bool
+	var xs []string
+	for _, node := range nodes {
+		xs = append(xs, node.ID)
+	}
+	return xs
 }

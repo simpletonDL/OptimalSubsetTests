@@ -1,7 +1,7 @@
 package knapsack
 
 import (
-	. "project/OptimalSubsetTests/tries"
+	. "github.com/simpletonDL/OptimalSubsetTests/trees"
 	"sort"
 	"time"
 )
@@ -25,12 +25,12 @@ func (s bySubtreeSize) Less(i, j int) bool {
 Для >= 2 вершин сплитит просто прекрасно :D
 Возвращает верхнее дерова, нижнее дерево и узел разбиения
  */
-func SplitTree(tree Tree) (Tree, Tree, *Node) {
+func SplitTree(tree *Tree) (*Tree, *Tree, *Node) {
 	timeNow := time.Now()
 	n := tree.GetSize()
 	if n < 2 {
 		S_time += time.Now().Sub(timeNow).Seconds()
-		return tree, Tree{}, tree.Root
+		return tree, &Tree{}, tree.Root
 	}
 
 	SortChildren(tree)
@@ -51,25 +51,25 @@ func SplitTree(tree Tree) (Tree, Tree, *Node) {
 				newRoot = ptr.Children[i]
 				newRoot.Parent = nil
 			} else {
-				newRoot = NewNode(0, 0, -1) // profit = 1 для умножкния, для сложение нужен 0
+				newRoot = NewNode(0, 0, "") // profit = 1 для умножкния, для сложение нужен 0
 				newRoot.IsRequired = true
 				newRoot.Children = make([]*Node, len(ptr.Children)-i)
 				copy(newRoot.Children, ptr.Children[i:])
 			}
 			ptr.Children = ptr.Children[:i]
 			S_time += time.Now().Sub(timeNow).Seconds()
-			return tree, Tree{Root:newRoot}, ptr
+			return tree, &Tree{Root:newRoot}, ptr
 		}
 	}
 	//Вот здесь бы exeption кидать, ибо не должно до сюда дело доходить
 	S_time += time.Now().Sub(timeNow).Seconds()
-	return Tree{}, Tree{}, nil
+	return &Tree{}, &Tree{}, nil
 }
 
 /**
 Сортирует поддеревья дерева по их размерам
  */
-func SortChildren(tree Tree)  {
+func SortChildren(tree *Tree)  {
 	var dfs func(*Node)
 	dfs = func (node *Node) {
 		for _, child := range node.Children {
